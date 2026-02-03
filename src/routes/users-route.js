@@ -1,4 +1,5 @@
 import { Router } from 'express'; // o que é o router do express? é um componente que permite criar rotas modulares e montáveis em uma aplicação Express.
+import productRepository from '../repository/product-repository.js';
 
 const app = Router();
 
@@ -8,22 +9,30 @@ app.put('/products/:id', updateProduct);
 app.delete('/products/:id', deleteProduct);
 app.get('/products/:id', getProductById);
 
-let products = [
-  { name: 'Laptop', price: 999.99, quantity: 10 },
-  { name: 'Smartphone', price: 499.99, quantity: 25 },
-  { name: 'Tablet', price: 299.99, quantity: 15 },
-  { name: 'Headphones', price: 199.99, quantity: 30 },
-  { name: 'Smartwatch', price: 199.99, quantity: 20 },
-];
-
-function getProducts(req, res) {
-  res.json(products);
+async function getProducts(req, res) {
+  try {
+    const products = await productRepository.getAllProducts();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-function createProduct(req, res) {
-  const newProduct = req.body;
-  products.push(newProduct);
-  res.status(201).json(newProduct);
+async function createProduct(req, res) {
+  try {
+    const newProduct = req.body;
+    /*
+    esta forma está errada porque não precisa do push, pois o createProduct já insere no banco de dados
+    const products = await productRepository.createProduct(newProduct);
+    products.push(newProduct);
+    */
+
+    await productRepository.createProduct(newProduct);
+
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
 function updateProduct(req, res) {
