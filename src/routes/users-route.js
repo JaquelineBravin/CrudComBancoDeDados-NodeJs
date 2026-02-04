@@ -21,37 +21,42 @@ async function getProducts(req, res) {
 async function createProduct(req, res) {
   try {
     const newProduct = req.body;
-    /*
-    esta forma está errada porque não precisa do push, pois o createProduct já insere no banco de dados
-    const products = await productRepository.createProduct(newProduct);
-    products.push(newProduct);
-    */
-
     await productRepository.createProduct(newProduct);
-
     res.status(201).json(newProduct);
   } catch (error) {
     res.status(500).json(error);
   }
 }
 
-function updateProduct(req, res) {
-  const index = req.params.id;
-  const updatedProduct = req.body;
-  products[index] = updatedProduct;
-  res.json(updatedProduct);
+async function updateProduct(req, res) {
+  try {
+    const index = req.params.id;
+    const updatedProduct = req.body;
+    await productRepository.updateProduct(index, updatedProduct);
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-function deleteProduct(req, res) {
-  const index = req.params.id;
-  const deletedProduct = products.splice(index, 1);
-  res.json(products);
+async function deleteProduct(req, res) {
+  try {
+    const index = req.params.id;
+    await productRepository.deleteProduct(index);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-function getProductById(req, res) {
-  const index = req.params.id;
-  const product = products[index];
-  res.json(product);
+async function getProductById(req, res) {
+  try {
+    const index = req.params.id;
+    const product = await productRepository.getProductById(index);
+    res.json(product);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
 export default app;
