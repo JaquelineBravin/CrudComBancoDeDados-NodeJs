@@ -11,11 +11,13 @@ class Table {
   }
 
   CreateTableProducts() {
-    const sql = `CREATE TABLE IF NOT EXISTS products (
+    const sql = `CREATE TABLE IF NOT EXISTS agenda (
             id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            nameProduct VARCHAR(50) NOT NULL,
+            nameClient VARCHAR(50) NOT NULL,
+            contact DOUBLE NOT NULL,
+            proceidure VARCHAR(50) NOT NULL,
+            deadline DATE NOT NULL,
             price DOUBLE NOT NULL,
-            quantity INT NOT NULL
         )`;
     this.connection.query(sql, (err) => {
       if (err) {

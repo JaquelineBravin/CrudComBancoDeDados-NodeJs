@@ -1,9 +1,9 @@
 import connection from '../sql/connection.js';
-import Product from '../model/product-model.js';
+import Client from '../model/client-model.js';
 
-class ProductRepository {
-  async getAllProducts() {
-    const sql = `SELECT * FROM products`;
+class ClientRepository {
+  async getAllClients() {
+    const sql = `SELECT * FROM agenda`;
     return new Promise((resolve, reject) => {
       const { rows } = connection.query(sql, (error, result) => {
         if (error) {
@@ -15,9 +15,15 @@ class ProductRepository {
     });
   }
 
-  async createProduct(Product) {
-    const sql = `INSERT INTO products (nameProduct, price, quantity) VALUES (?, ?, ?)`;
-    const values = [Product.name, Product.price, Product.quantity];
+  async createClient(Client) {
+    const sql = `INSERT INTO agenda (nameClient, contact, proceidure, deadline, price) VALUES (?, ?, ?)`;
+    const values = [
+      Client.nameClient,
+      Client.contact,
+      Client.proceidure,
+      Client.deadline,
+      Client.price,
+    ];
     return new Promise((resolve, reject) => {
       connection.query(sql, values, (error, result) => {
         if (error) {
@@ -29,9 +35,16 @@ class ProductRepository {
     });
   }
 
-  async updateProduct(id, Product) {
-    const sql = `UPDATE products SET nameProduct = ?, price = ?, quantity = ? WHERE id = ?`;
-    const values = [Product.name, Product.price, Product.quantity, id];
+  async updateClient(id, Client) {
+    const sql = `UPDATE agenda SET nameClient = ?, contact = ?, proceidure = ?, deadline = ?, price = ?, WHERE id = ?`;
+    const values = [
+      Client.nameClient,
+      Client.contact,
+      Client.proceidure,
+      Client.deadline,
+      Client.price,
+      id,
+    ];
     return new Promise((resolve, reject) => {
       connection.query(sql, values, (error, result) => {
         if (error) {
@@ -43,8 +56,8 @@ class ProductRepository {
     });
   }
 
-  async deleteProduct(id) {
-    const sql = `DELETE FROM products WHERE id = ?`;
+  async deleteClient(id) {
+    const sql = `DELETE FROM agenda WHERE id = ?`;
     const values = [id];
     return new Promise((resolve, reject) => {
       connection.query(sql, values, (error, result) => {
@@ -57,8 +70,8 @@ class ProductRepository {
     });
   }
 
-  async getProductById(id) {
-    const sql = `SELECT * FROM products WHERE id = ?`;
+  async getClientById(id) {
+    const sql = `SELECT * FROM agenda WHERE id = ?`;
     const values = [id];
     return new Promise((resolve, reject) => {
       connection.query(sql, values, (error, result) => {
@@ -72,4 +85,4 @@ class ProductRepository {
   }
 }
 
-export default new ProductRepository();
+export default new ClientRepository();
