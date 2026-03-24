@@ -1,9 +1,10 @@
 import { Router } from 'express'; // o que é o router do express? é um componente que permite criar rotas modulares e montáveis em uma aplicação Express.
 import ClientRepository from '../repository/client-repository.js';
+import { authenticateToken } from '../middleware/jwt-auth-middleware.js';
 
 const app = Router();
 
-app.get('/client', getClient);
+app.get('/client', authenticateToken, getClient);
 app.post('/client', createClient);
 app.put('/client/:id', updateClient);
 app.delete('/client/:id', deleteClient);
@@ -43,7 +44,7 @@ async function deleteClient(req, res) {
   try {
     const index = req.params.id;
     await ClientRepository.deleteClient(index);
-    res.json({ message: 'Product deleted successfully' });
+    res.json({ message: 'Client deleted successfully' });
   } catch (error) {
     res.status(500).json(error);
   }

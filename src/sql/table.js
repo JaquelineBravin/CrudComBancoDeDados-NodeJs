@@ -16,8 +16,8 @@ class Table {
             nameClient VARCHAR(50) NOT NULL,
             contact DOUBLE NOT NULL,
             proceidure VARCHAR(50) NOT NULL,
-            deadline DATE NOT NULL,
-            price DOUBLE NOT NULL,
+            deadline DATE,
+            price DOUBLE NOT NULL
         )`;
     this.connection.query(sql, (err) => {
       if (err) {

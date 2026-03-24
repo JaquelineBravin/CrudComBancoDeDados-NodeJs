@@ -16,7 +16,7 @@ class ClientRepository {
   }
 
   async createClient(Client) {
-    const sql = `INSERT INTO agenda (nameClient, contact, proceidure, deadline, price) VALUES (?, ?, ?)`;
+    const sql = `INSERT INTO agenda (nameClient, contact, proceidure, deadline, price) VALUES (?, ?, ?, ?, ?)`;
     const values = [
       Client.nameClient,
       Client.contact,
@@ -36,7 +36,7 @@ class ClientRepository {
   }
 
   async updateClient(id, Client) {
-    const sql = `UPDATE agenda SET nameClient = ?, contact = ?, proceidure = ?, deadline = ?, price = ?, WHERE id = ?`;
+    const sql = `UPDATE agenda SET nameClient = ?, contact = ?, proceidure = ?, deadline = ?, price = ? WHERE id = ?`;
     const values = [
       Client.nameClient,
       Client.contact,
