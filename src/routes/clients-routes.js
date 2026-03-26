@@ -2,13 +2,13 @@ import { Router } from 'express'; // o que é o router do express? é um compone
 import ClientRepository from '../repository/client-repository.js';
 import { authenticateToken } from '../middleware/jwt-auth-middleware.js';
 
-const app = Router();
+const clientsRoutes = Router();
 
-app.get('/client', authenticateToken, getClient);
-app.post('/client', createClient);
-app.put('/client/:id', updateClient);
-app.delete('/client/:id', deleteClient);
-app.get('/client/:id', getClientById);
+clientsRoutes.get('/client', authenticateToken, getClient);
+clientsRoutes.post('/client', createClient);
+clientsRoutes.put('/client/:id', updateClient);
+clientsRoutes.delete('/client/:id', deleteClient);
+clientsRoutes.get('/client/:id', getClientById);
 
 async function getClient(req, res) {
   try {
@@ -60,4 +60,4 @@ async function getClientById(req, res) {
   }
 }
 
-export default app;
+export default clientsRoutes;
