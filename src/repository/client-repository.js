@@ -16,6 +16,10 @@ class ClientRepository {
   }
 
   async createClient(Client) {
+    const existingClient = await this.getClientByName(Client.nameClient);
+    if (existingClient && existingClient.length > 0)
+      throw new Error('Client already exists');
+
     const sql = `INSERT INTO agenda (nameClient, contact, proceidure, deadline, price) VALUES (?, ?, ?, ?, ?)`;
     const values = [
       Client.nameClient,
@@ -36,6 +40,9 @@ class ClientRepository {
   }
 
   async updateClient(id, Client) {
+    const existingClient = await this.getClientById(id);
+    if (!existingClient || existingClient.length === 0)
+      throw new Error('Client not found');
     const sql = `UPDATE agenda SET nameClient = ?, contact = ?, proceidure = ?, deadline = ?, price = ? WHERE id = ?`;
     const values = [
       Client.nameClient,
@@ -73,6 +80,20 @@ class ClientRepository {
   async getClientById(id) {
     const sql = `SELECT * FROM agenda WHERE id = ?`;
     const values = [id];
+    return new Promise((resolve, reject) => {
+      connection.query(sql, values, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  async getClientByName(nameClient) {
+    const sql = `SELECT * FROM agenda WHERE nameClient = ?`;
+    const values = [nameClient];
     return new Promise((resolve, reject) => {
       connection.query(sql, values, (error, result) => {
         if (error) {
