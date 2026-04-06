@@ -8,8 +8,8 @@ userRoutes.get('/users', getAllUser);
 userRoutes.post('/user', createUser);
 userRoutes.put('/user/:id', updateUser);
 userRoutes.delete('/user/:id', deleteUser);
-userRoutes.get('/user/:nameUser', getUserByName);
-userRoutes.get('/user/:id', getUserById);
+userRoutes.get('/user/id/:id', getUserById);
+userRoutes.get('/user/name/:nameUser', getUserByName);
 
 async function getAllUser(req, res) {
   const users = await UserRepository.getAllUsers();
@@ -42,9 +42,14 @@ async function updateUser(req, res) {
     const id = req.params.id;
     const user = req.body;
     const updatedUser = await UserRepository.updateUser(id, user);
-    res.json(updatedUser);
+    res.json({ message: 'User updated successfully' });
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+    const message = error.message;
+    if (message.includes('required')) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: message });
+    } else if (message.includes('not found')) {
+      res.status(StatusCodes.NOT_FOUND).json({ error: message });
+    }
   }
 }
 
@@ -59,15 +64,33 @@ async function deleteUser(req, res) {
 }
 
 async function getUserByName(req, res) {
-  const name = req.params.nameUser;
-  const user = await UserRepository.getUserByName(name);
-  res.json(user);
+  try {
+    const name = req.params.nameUser;
+    const user = await UserRepository.getUserByName(name);
+    if (!user || user.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
 }
 
 async function getUserById(req, res) {
-  const id = req.params.id;
-  const user = await UserRepository.getUserById(id);
-  res.json(user);
+  try {
+    const id = req.params.id;
+    const user = await UserRepository.getUserById(id);
+    if (!user || user.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
 }
 
 export default userRoutes;

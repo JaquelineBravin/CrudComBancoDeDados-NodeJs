@@ -54,6 +54,9 @@ async function getClientById(req, res) {
   try {
     const index = req.params.id;
     const client = await ClientRepository.getClientById(index);
+    if (!client || client.length === 0) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
     res.json(client);
   } catch (error) {
     res.status(500).json(error);
