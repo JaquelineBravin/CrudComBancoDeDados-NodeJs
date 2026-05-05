@@ -7,80 +7,56 @@ import { StatusCodes } from 'http-status-codes';
 const clientsRoutes = Router();
 
 clientsRoutes.get('/client', authenticateToken, getClient);
-clientsRoutes.post('/client', createClient);
-clientsRoutes.put('/client/:id', updateClient);
-clientsRoutes.delete('/client/:id', deleteClient);
-clientsRoutes.get('/client/id/:id', getClientById);
-clientsRoutes.get('/client/name/:nameClient', getClientByName);
+clientsRoutes.post('/client', authenticateToken, createClient);
+clientsRoutes.put('/client/:id', authenticateToken, updateClient);
+clientsRoutes.delete('/client/:id', authenticateToken, deleteClient);
+clientsRoutes.get('/client/id/:id', authenticateToken, getClientById);
+clientsRoutes.get(
+  '/client/name/:nameClient',
+  authenticateToken,
+  getClientByName,
+);
 
 async function getClient(req, res) {
-  try {
-    const clients = await ClientRepository.getAllClients();
-    res.json(clients);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json(error);
-  }
+  const clients = await ClientRepository.getAllClients();
+  res.status(StatusCodes.OK).json(clients);
 }
 
 async function createClient(req, res) {
-  try {
-    const newClient = req.body;
-    await ClientRepository.createClient(newClient);
-    res.status(StatusCodes.OK).json(newClient);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json(error);
-  }
+  const newClient = req.body;
+  await ClientRepository.createClient(newClient);
+  res.status(StatusCodes.OK).json(newClient);
 }
 
 async function updateClient(req, res) {
-  try {
-    const id = req.params.id;
-    const updatedClient = req.body;
-    await ClientRepository.updateClient(id, updatedClient);
-    res.status(StatusCodes.OK).json(updatedClient);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json(error);
-  }
+  const id = req.params.id;
+  const updatedClient = req.body;
+  await ClientRepository.updateClient(id, updatedClient);
+  res.status(StatusCodes.OK).json(updatedClient);
 }
 
 async function deleteClient(req, res) {
-  try {
-    const id = req.params.id;
-    await ClientRepository.deleteClient(id);
-    res.status(StatusCodes.OK).json({ message: 'Client deleted successfully' });
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json(error);
-  }
+  const id = req.params.id;
+  await ClientRepository.deleteClient(id);
+  res.status(StatusCodes.OK).json({ message: 'Client deleted successfully' });
 }
 
 async function getClientById(req, res) {
-  try {
-    const index = req.params.id;
-    const client = await ClientRepository.getClientById(index);
-    if (!client || client.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: 'Client not found' });
-    }
-    res.json(client);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json(error);
+  const index = req.params.id;
+  const client = await ClientRepository.getClientById(index);
+  if (!client || client.length === 0) {
+    throw new NotFoundError('User not found');
   }
+  res.status(StatusCodes.OK).json(client);
 }
 
 async function getClientByName(req, res) {
   const name = req.params.nameClient;
-  try {
-    const client = await clientRepository.getClientByName(name);
-    if (!client || client.length === 0) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        error: 'Client not found',
-      });
-    }
-    res.json(client);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  const client = await clientRepository.getClientByName(name);
+  if (!client || client.length === 0) {
+    throw new NotFoundError('User not found');
   }
+  res.status(StatusCodes.OK).json(client);
 }
 
 export default clientsRoutes;

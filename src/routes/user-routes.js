@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import UserRepository from '../repository/user-repository.js';
 import { StatusCodes } from 'http-status-codes';
+import { NotFoundError } from '../../utils/api-errors.js';
 
 const userRoutes = Router();
 
@@ -17,80 +18,42 @@ async function getAllUser(req, res) {
 }
 
 async function createUser(req, res) {
-  try {
-    const user = req.body;
-    await UserRepository.createUser(user);
-    res
-      .status(StatusCodes.CREATED)
-      .json({ message: 'User created successfully' });
-  } catch (error) {
-    const message = error.message;
-    let status = StatusCodes.INTERNAL_SERVER_ERROR;
-
-    if (message.includes('required')) {
-      status = StatusCodes.BAD_REQUEST;
-    } else if (message.includes('already exists')) {
-      status = StatusCodes.CONFLICT;
-    }
-
-    res.status(status).json({ error: message });
-  }
+  const user = req.body;
+  await UserRepository.createUser(user);
+  res
+    .status(StatusCodes.CREATED)
+    .json({ message: 'User created successfully' });
 }
 
 async function updateUser(req, res) {
-  try {
-    const id = req.params.id;
-    const user = req.body;
-    const updatedUser = await UserRepository.updateUser(id, user);
-    res.json({ message: 'User updated successfully' });
-  } catch (error) {
-    const message = error.message;
-    if (message.includes('required')) {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: message });
-    } else if (message.includes('not found')) {
-      res.status(StatusCodes.NOT_FOUND).json({ error: message });
-    }
-  }
+  const id = req.params.id;
+  const user = req.body;
+  await UserRepository.updateUser(id, user);
+  res.status(StatusCodes.OK).json({ message: 'User updated successfully' });
 }
 
 async function deleteUser(req, res) {
-  try {
-    const id = req.params.id;
-    const deletedUser = await UserRepository.deleteUser(id);
-    res.json({ message: 'User deleted successfully' });
-  } catch (error) {
-    res.status(StatusCodes.NOT_FOUND).json({ error: error.message });
-  }
+  const id = req.params.id;
+  await UserRepository.deleteUser(id);
+  res.status(StatusCodes.OK).json({ message: 'User deleted successfully' });
 }
 
 async function getUserByName(req, res) {
-  try {
-    const name = req.params.nameUser;
-    const user = await UserRepository.getUserByName(name);
-    if (!user || user.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: 'User not found' });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  const name = req.params.nameUser;
+  const user = await UserRepository.getUserByName(name);
+  if (!user || user.length === 0) {
+    throw new NotFoundError('User not found');
   }
+  res.status(StatusCodes.OK).json(user);
 }
 
 async function getUserById(req, res) {
-  try {
-    const id = req.params.id;
-    const user = await UserRepository.getUserById(id);
-    if (!user || user.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: 'User not found' });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  const id = req.params.id;
+  const user = await UserRepository.getUserById(id);
+  if (!user || user.length === 0) {
+    throw new NotFoundError('User not found');
   }
+  res.status(StatusCodes.OK).json(user);
 }
 
 export default userRoutes;

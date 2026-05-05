@@ -1,11 +1,10 @@
 import jwt from 'jsonwebtoken';
-import express, { Router } from 'express';
+import { Router } from 'express';
 import UserRepository from '../repository/user-repository.js';
 
 const authRoute = Router();
 
 const SecretKey = process.env.SECRET_KEY;
-console.log(SecretKey);
 
 authRoute.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -18,10 +17,12 @@ authRoute.post('/login', async (req, res) => {
       const token = jwt.sign({ id: user.id }, SecretKey, { expiresIn: '5h' });
       res.json({ token });
     } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+      throw new BadRequestError('Invalid credentials');
     }
   } catch (error) {
-    res.status(500).json({ error });
+    throw new InternalServerError(
+      'An error occurred while processing the request',
+    );
   }
 });
 

@@ -1,5 +1,10 @@
 import connection from '../sql/connection.js';
 import User from '../model/user-model.js';
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from '../../utils/api-errors.js';
 
 class userRepository {
   async getAllUsers() {
@@ -18,11 +23,11 @@ class userRepository {
   async createUser(User) {
     const existingUser = await this.getUserByName(User.nameUser);
     if (existingUser && existingUser.length > 0) {
-      throw new Error('User already exists');
+      throw new ConflictError('User already exists');
     }
 
     if (!User.nameUser || !User.passwordUser) {
-      throw new Error('Name and password are required');
+      throw new BadRequestError('Name and password are required');
     }
 
     const sql = `INSERT INTO users (nameUser, passwordUser) VALUES (?, ?)`;
@@ -41,11 +46,11 @@ class userRepository {
   async updateUser(id, user) {
     const existingUser = await this.getUserById(id);
     if (!existingUser || existingUser.length === 0) {
-      throw new Error('User not found');
+      throw new NotFoundError('User not found');
     }
 
     if (!user.nameUser || !user.passwordUser) {
-      throw new Error('Name and password are required');
+      throw new BadRequestError('Name and password are required');
     }
 
     const sql = `UPDATE users SET nameUser = ?, passwordUser = ? WHERE id = ?`;
@@ -78,7 +83,7 @@ class userRepository {
         });
       });
     } else {
-      throw new Error('User not found');
+      throw new NotFoundError('User not found');
     }
   }
 

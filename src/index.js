@@ -5,6 +5,7 @@ import table from './sql/table.js';
 import authRoute from './routes/auth-routes.js';
 import userRoutes from './routes/user-routes.js';
 import clientsRoutes from './routes/clients-routes.js';
+import { errorMiddleware } from './middleware/error-middleware.js';
 
 table.init(connection);
 
@@ -15,5 +16,6 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(authRoute);
 app.use(clientsRoutes);
+app.use(errorMiddleware);
 
 app.listen(port);
