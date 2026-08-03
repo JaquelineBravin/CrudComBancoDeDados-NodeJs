@@ -10,7 +10,7 @@ clientsRoutes.get('/client', authenticateToken, getClient);
 clientsRoutes.post('/client', authenticateToken, createClient);
 clientsRoutes.put('/client/:id', authenticateToken, updateClient);
 clientsRoutes.delete('/client/:id', authenticateToken, deleteClient);
-clientsRoutes.get('/client/id/:id', authenticateToken, getClientById);
+clientsRoutes.get('/client/:id', authenticateToken, getClientById);
 clientsRoutes.get(
   '/client/name/:nameClient',
   authenticateToken,

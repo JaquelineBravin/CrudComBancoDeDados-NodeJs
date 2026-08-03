@@ -1,9 +1,4 @@
 class Table {
-  /*constructor(connection) {
-    this.connection = connection;
-    this.CreateTableProducts();
-  }*/
-
   // init is a method to initialize the connection and create the table
   init(connection) {
     this.connection = connection;
